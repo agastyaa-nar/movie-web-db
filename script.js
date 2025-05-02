@@ -1,9 +1,21 @@
-$(".search-btn").on("click", function(){
+$(".search-btn").on("click", function(e){
+    e.preventDefault();
+
+    let keyword = $(".input-keyword").val()
+    if(!keyword){
+        alert("Masukkan judul film!")   
+    }
+
     $.ajax({
-        url: "http://www.omdbapi.com/?apikey=37a4b1ea&s=" + $(".input-keyword").val(),
+        url: "http://www.omdbapi.com/?apikey=37a4b1ea&s=" + keyword,
         success: movies => {
+            if (movies.Response === "False") {
+                alert(movies.Error); 
+                return;
+            }
+
             const movieList = movies.Search;
-    
+            
             let cards = ""
             movieList.forEach(m => {
                 cards += showMovie(m);
@@ -21,6 +33,7 @@ $(".search-btn").on("click", function(){
                     },
                     error: e => {
                         console.log(e.responseText);
+                        alert("Film Not Found")
                     }
                 })
             })
@@ -51,7 +64,7 @@ function showMovie(m){
 function showDetail(detail){
     return `<div class="row">
                         <div class="col md-5">
-                            <img src="${detail.Poster}">
+                            <img class="img-fluid"src="${detail.Poster}">
                         </div>
 
                         <div class="col">
